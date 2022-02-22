@@ -1,0 +1,5 @@
+.sun {
+  stroke-width: 8px;
+  stroke: rgba(255, 150, 0, 0.5);
+  stroke-dasharray: 3px;
+}

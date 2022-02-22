@@ -11,9 +11,9 @@ export const useStore = defineStore("weather", {
       this.info = obj;
     },
     async getWeather() {
-      const result = await getAjax();
       const obj = {};
       try {
+        const result = await getAjax();
         const list = result.records?.locations[0]?.location;
         const target = list.find((item) => item.locationName === this.zone);
         target.weatherElement &&
@@ -22,6 +22,7 @@ export const useStore = defineStore("weather", {
               obj[vo.elementName] = vo;
             }
           });
+        this.updateInfo(obj);
         console.log("obj", obj);
       } catch (error) {
         console.log("error", error);
