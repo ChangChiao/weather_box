@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted } from "vue";
 import { useStore } from "@/store";
+import { addZero, transStatus } from "@/utils/common";
 import { week } from "@/constants/Date.js";
 import { storeToRefs } from "pinia";
 import Rainy from "@/components/Rainy.vue";
@@ -8,17 +9,50 @@ import Clear from "@/components/Clear.vue";
 import Cloudy from "@/components/Cloudy.vue";
 import Sunny from "@/components/Sunny.vue";
 
-const nowWeather = Rainy;
-const weekData = computed(() => {
-  return [1, 2, 3, 4, 5, 6, 7];
-});
+// const nowWeather = Rainy;
 const store = useStore();
-const { state } = storeToRefs(store);
+const weatherList = {
+  rain: Rainy,
+  cloudy: Cloudy,
+  clear: Clear,
+  sunny: Sunny,
+};
+const { info, zone, column } = storeToRefs(store);
+const weekData = computed(() => {
+  const { Wx } = info.value;
+  const dayData = Wx?.time.filter((vo, i) => {
+    return i % 2 === 0;
+  });
+  const data =
+    dayData &&
+    dayData.map((vo, i) => {
+      return vo?.elementValue[0].value;
+    });
+  return data;
+});
+
+const temperature = computed(() => {
+  const { MinT, MaxT } = info.value;
+  console.log("MinT", MinT);
+  const high = MaxT?.time[0].elementValue[0].value;
+  const Low = MinT?.time[0].elementValue[0].value;
+  return `${Low}°C~${high}°C`;
+});
+
+const todayWeather = computed(() => {
+  const { Wx } = info.value;
+  const target = Wx?.time[0].elementValue[0].value;
+  return transStatus(target);
+});
+
+setTimeout(() => {
+  console.log("temperature", temperature);
+}, 2000);
 const getTime = () => {
   const day = new Date().getDay();
   const hour = new Date().getHours();
   const minutes = new Date().getMinutes();
-  return `${week[day]} ${hour}:${minutes}`;
+  return `${week[day]} ${addZero(hour)}:${addZero(minutes)}`;
 };
 onMounted(() => {
   store.getWeather();
@@ -36,22 +70,21 @@ onMounted(() => {
     </section>
     <section class="flex pt-4">
       <div class="w-1/2 pl-6 text-4xl">
-        <p>20<span>~</span> 22°C</p>
+        <p>{{ temperature }}</p>
         <p class="text-xl">{{ getTime() }}</p>
       </div>
       <div class="w-1/2 text-center">
-        <component :is="nowWeather" :size="'w-36 h-36 mx-auto'" />
-        <p>晴時多雲</p>
+        <component
+          :is="weatherList[todayWeather]"
+          :size="'w-36 h-36 mx-auto'"
+        />
+        <p>{{ zone }} 晴時多雲</p>
       </div>
     </section>
-    <!-- <rainy /> -->
-    <!-- <Cloudy /> -->
-    <!-- <Clear />
-    <Sunny /> -->
     <ul class="flex">
       <li v-for="(vo, i) in weekData" :key="i">
-        <component :is="nowWeather" :size="'w-12 h-12'" />
-        <p>{{ vo }}</p>
+        <component :is="weatherList[transStatus(vo)]" :size="'w-12 h-12'" />
+        <!-- <p>{{ vo }}</p> -->
       </li>
     </ul>
   </main>
