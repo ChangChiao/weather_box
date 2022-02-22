@@ -17,7 +17,7 @@ const props = defineProps({
 <style scoped>
 @import "@/style/cloudy.css";
 .rain {
-  height: 20px;
+  height: 10px;
   width: 1px;
   background: #fff;
   position: absolute;
@@ -25,16 +25,16 @@ const props = defineProps({
   right: 0;
   margin: auto;
   top: 30px;
-  animation: rain 1s infinite linear;
+  animation: rain 0.8s infinite linear;
 }
 .rain2 {
-  left: -30px;
+  left: -15px;
   top: 30px;
   animation-delay: -0.7s;
 }
 
 .rain3 {
-  left: 40px;
+  left: 20px;
   top: 30px;
   animation-delay: -0.5s;
 }
@@ -49,7 +49,7 @@ const props = defineProps({
     opacity: 0.4;
   }
   100% {
-    transform: translateY(60px);
+    transform: translateY(30px);
     opacity: 0;
   }
 }

@@ -1,8 +1,8 @@
 .cloud {
   position: absolute;
   animation: floating 4s infinite;
-  width: 100px;
-  height: 30px;
+  width: 40px;
+  height: 10px;
   border-radius: 25px;
   left: 0;
   right: 0;
@@ -15,8 +15,8 @@
 .cloud:before {
   content: "";
   display: block;
-  height: 50px;
-  width: 50px;
+  height: 20px;
+  width: 20px;
   z-index: 2;
   border-radius: 50%;
   background: #fff;
@@ -24,10 +24,10 @@
 }
 
 .cloud:after {
-  top: -15px;
-  left: 10px;
+  top: -6px;
+  left: 4px;
 }
 .cloud:before {
-  left: 35px;
-  top: -10px;
+  top: -5px;
+  left: 16px;
 }
