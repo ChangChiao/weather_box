@@ -2,6 +2,10 @@
 
 #### 串接中央氣象局開放資料 + 用 pinia 管理資料
 
+### demo 網址
+
+👉 [天氣盒](https://changchiao.github.io/weather_box/)
+
 - **template of:** vite + vue
 - **tailwindcss:** v3.x
 
