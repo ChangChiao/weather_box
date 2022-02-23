@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "@/store";
 import { addZero, transStatus } from "@/utils/common";
 import { week } from "@/constants/Date.js";
@@ -8,7 +8,7 @@ import Rainy from "@/components/Rainy.vue";
 import Clear from "@/components/Clear.vue";
 import Cloudy from "@/components/Cloudy.vue";
 import Sunny from "@/components/Sunny.vue";
-
+import Loading from "@/components/Loading.vue";
 // const nowWeather = Rainy;
 const store = useStore();
 const weatherList = {
@@ -17,6 +17,7 @@ const weatherList = {
   clear: Clear,
   sunny: Sunny,
 };
+const isOpen = ref(false);
 const { info, zone, column } = storeToRefs(store);
 const weekData = computed(() => {
   const { Wx } = info.value;
@@ -27,13 +28,12 @@ const weekData = computed(() => {
 });
 
 const weekStatus = computed(() => {
-  console.log("weekData", weekData);
   const data =
     weekData.value &&
     weekData.value.map((vo, i) => {
       return vo?.elementValue[0].value;
     });
-  return data;
+  return data || [];
 });
 
 const weekDay = computed(() => {
@@ -51,7 +51,7 @@ const temperature = computed(() => {
   const { MinT, MaxT } = info.value;
   const high = MaxT?.time[0].elementValue[0].value;
   const Low = MinT?.time[0].elementValue[0].value;
-  return `${Low}°C~${high}°C`;
+  return `${Low || 0}°C~${high || 0}°C`;
 });
 
 const todayWeather = computed(() => {
@@ -60,9 +60,13 @@ const todayWeather = computed(() => {
   return target && transStatus(target);
 });
 
-setTimeout(() => {
-  console.log("temperature", temperature);
-}, 2000);
+watch(weekData, (newVal) => {
+  console.log("newVal~~", newVal);
+  if (newVal && newVal.length > 0) {
+    console.log("innnnnnn");
+    isOpen.value = false;
+  }
+});
 const getTime = () => {
   const day = new Date().getDay();
   const hour = new Date().getHours();
@@ -70,6 +74,7 @@ const getTime = () => {
   return `${week[day]} ${addZero(hour)}:${addZero(minutes)}`;
 };
 onMounted(() => {
+  isOpen.value = true;
   store.getWeather();
 });
 </script>
@@ -107,6 +112,7 @@ onMounted(() => {
       </li>
     </ul>
   </main>
+  <loading :isOpen="isOpen" />
 </template>
 
 <style></style>
