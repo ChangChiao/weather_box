@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import { useStore } from "@/store";
 import { addZero, transStatus } from "@/utils/common";
 import { week } from "@/constants/Date.js";
@@ -17,6 +17,8 @@ const weatherList = {
   clear: Clear,
   sunny: Sunny,
 };
+let timer = null;
+const time = ref(0);
 const isOpen = ref(false);
 const { info, zone, column } = storeToRefs(store);
 const weekData = computed(() => {
@@ -61,9 +63,7 @@ const todayWeather = computed(() => {
 });
 
 watch(weekData, (newVal) => {
-  console.log("newVal~~", newVal);
   if (newVal && newVal.length > 0) {
-    console.log("innnnnnn");
     isOpen.value = false;
   }
 });
@@ -73,9 +73,21 @@ const getTime = () => {
   const minutes = new Date().getMinutes();
   return `${week[day]} ${addZero(hour)}:${addZero(minutes)}`;
 };
+
+const setClock = () => {
+  setInterval(() => {
+    time.value = new Date();
+  }, 1000);
+};
+
 onMounted(() => {
   isOpen.value = true;
   store.getWeather();
+  setClock();
+});
+
+onBeforeUnmount(() => {
+  clearInterval(timer);
 });
 </script>
 
@@ -91,7 +103,7 @@ onMounted(() => {
     <section class="flex pt-4">
       <div class="w-1/2 pl-6 text-4xl">
         <p>{{ temperature }}</p>
-        <p class="py-2 text-lg">{{ getTime() }}</p>
+        <p class="py-2 text-lg">{{ getTime(time) }}</p>
         <p class="font-bold">{{ zone }}</p>
       </div>
       <div class="w-1/2 text-center">
@@ -99,7 +111,7 @@ onMounted(() => {
           :is="weatherList[todayWeather]"
           :size="'w-24 h-24 mx-auto scale-[2.5]'"
         />
-        <p>晴時多雲</p>
+        <p>{{ weekStatus[0] }}</p>
       </div>
     </section>
     <ul class="flex justify-between px-4 pt-10">

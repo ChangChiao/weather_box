@@ -23,7 +23,6 @@ export const useStore = defineStore("weather", {
             }
           });
         this.updateInfo(obj);
-        console.log("obj", obj);
       } catch (error) {
         console.log("error", error);
       }
